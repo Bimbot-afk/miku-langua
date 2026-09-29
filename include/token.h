@@ -1,0 +1,8 @@
+//
+// Created by emar0 on 28/09/2026.
+//
+
+#ifndef MIKU_LANGUAGE_TOKEN_H
+#define MIKU_LANGUAGE_TOKEN_H
+
+#endif //MIKU_LANGUAGE_TOKEN_H
