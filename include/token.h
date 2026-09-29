@@ -57,4 +57,6 @@ typedef struct {
     int column;
 } Token;
 
+const char *tokenTypeToString(TokenType type);
+
 #endif //MIKU_LANGUAGE_TOKEN_H

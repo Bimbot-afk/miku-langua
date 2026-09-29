@@ -8,10 +8,4 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-class common {
-    
-};
-
-
 #endif //MIKU_LANGUAGE_COMMON_H
