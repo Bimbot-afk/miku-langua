@@ -1,12 +1,16 @@
-//
-// Created by emar0 on 28/09/2026.
-//
 
 #ifndef MIKU_LANGUAGE_COMMON_H
 #define MIKU_LANGUAGE_COMMON_H
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 class common {
+    
 };
 
 
