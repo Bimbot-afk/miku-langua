@@ -13,7 +13,7 @@ static bool is_at_end(const Lexer *lexer) {
 
 static char advance(Lexer *lexer) {
     lexer->current++;
-    return *lexer->current;
+    return lexer->current[-1];
 }
 
 static char peek(const Lexer *lexer) {
@@ -59,7 +59,7 @@ Token lexer_next_token(Lexer *lexer) {
         while (isdigit(peek(lexer))) {
             advance(lexer);
         }
-        return make_token(lexer);
+        return make_token(lexer, TOKEN_NUMBER);
     }
     if (c == '+') {
         return make_token(lexer, TOKEN_PLUS);

@@ -10,6 +10,6 @@ typedef struct {
 } Lexer;
 
 void lexer_init(Lexer *lexer, const char *source);
-Token lexer_nextToken(Lexer *lexer);
+Token lexer_next_token(Lexer *lexer);
 
 #endif //MIKU_LANGUAGE_LEXER_H
