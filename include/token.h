@@ -45,7 +45,11 @@ typedef enum {
     TOKEN_RETURN,
 
     TOKEN_LESS,
-    TOKEN_GREATER
+    TOKEN_GREATER,
+
+    TOKEN_SING,
+    TOKEN_DIV,
+    TOKEN_MUL
 
 } TokenType;
 
