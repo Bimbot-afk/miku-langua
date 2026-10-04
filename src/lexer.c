@@ -1,4 +1,5 @@
 #include  "lexer.h"
+#include "string.h"
 #include <ctype.h>
 
 void lexer_init(Lexer *lexer, const char *source) {
@@ -64,6 +65,27 @@ Token lexer_next_token(Lexer *lexer) {
     if (c == '+') {
         return make_token(lexer, TOKEN_PLUS);
     }
+
+    if (c == '-') {
+        return make_token(lexer, TOKEN_MINUS);
+    }
+
+    if (c == '*') {
+        return make_token(lexer, TOKEN_MUL);
+    }
+
+    if (c == '/') {
+        return make_token(lexer, TOKEN_DIV);
+    }
+
+    if (c == ';') {
+        return make_token(lexer, TOKEN_SEMICOLON);
+    }
+
+    if (token.length == 4 && memcmp(token.lexeme, "sing", 4) == 0) {
+        return make_token(lexer, TOKEN_SING);
+    }
+
     return make_token(lexer, TOKEN_ERROR);
 }
 
