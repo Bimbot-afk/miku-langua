@@ -49,7 +49,8 @@ typedef enum {
 
     TOKEN_SING,
     TOKEN_DIV,
-    TOKEN_MUL
+    TOKEN_MUL,
+    TOKEN_GREATER_EQUAL,
 
 } TokenType;
 
