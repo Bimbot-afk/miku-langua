@@ -1,9 +1,6 @@
-//
-// Created by emar0 on 28/09/2026.
-//
-
-#include "../include/lexer.h"
+#include "lexer.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 int main(int argc, char *argv[]) {
     const char *codigo;
@@ -13,26 +10,47 @@ int main(int argc, char *argv[]) {
     } else {
         codigo = "10 + 25 + 3";
     }
-    printf("thinking: %s\n", codigo);
+
+    printf("Expresion: \"%s\"\n", codigo);
 
     Lexer lexer;
     lexer_init(&lexer, codigo);
 
-    Token token;
-    do {
-        token = lexer_next_token(&lexer);
 
-        if (token.type == TOKEN_NUMBER) {
-            printf("[NUMERO] %.*s\n", token.length, token.lexeme);
-        } else if (token.type == TOKEN_PLUS) {
-            printf("[SUMA]   +\n");
-        } else if (token.type == TOKEN_EOF) {
-            printf("[FIN]\n");
-        } else {
-            printf("[ERROR] Carácter no reconocido\n");
+    Token token = lexer_next_token(&lexer);
+
+    if (token.type != TOKEN_NUMBER) {
+        fprintf(stderr, "Error de sintaxis: se esperaba un numero inicial.\n");
+        return 1;
+    }
+
+    long resultado = strtol(token.lexeme, NULL, 10);
+
+    token = lexer_next_token(&lexer);
+
+    while (token.type == TOKEN_PLUS) {
+
+        Token num_token = lexer_next_token(&lexer);
+
+        if (num_token.type != TOKEN_NUMBER) {
+            fprintf(stderr, "Error de sintaxis: se esperaba un numero despues del '+'.\n");
+            return 1;
         }
 
-    } while (token.type != TOKEN_EOF && token.type != TOKEN_ERROR);
+        long valor = strtol(num_token.lexeme, NULL, 10);
+        resultado += valor;
+
+
+        token = lexer_next_token(&lexer);
+    }
+
+    if (token.type != TOKEN_EOF) {
+        fprintf(stderr, "Error de sintaxis: token inesperado en la expresion.\n");
+        return 1;
+    }
+
+
+    printf("Resultado = %ld\n", resultado);
 
     return 0;
 }
