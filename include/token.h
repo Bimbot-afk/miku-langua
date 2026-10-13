@@ -52,6 +52,8 @@ typedef enum {
     TOKEN_MUL,
     TOKEN_GREATER_EQUAL,
 
+    TOKEN_TALK
+
 } TokenType;
 
 typedef struct {
