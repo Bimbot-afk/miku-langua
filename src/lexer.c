@@ -76,6 +76,10 @@ static Token scan_identifier(Lexer *lexer) {
         return make_token(lexer, TOKEN_TALK);
     }
 
+    if (length == 4 && memcmp(lexer->start, "note", 4) == 0) {
+        return make_token(lexer, TOKEN_NOTE);
+    }
+
     return make_token(lexer, TOKEN_IDENTIFIER);
 }
 
@@ -112,6 +116,7 @@ Token lexer_next_token(Lexer *lexer) {
     if (c == ';') return make_token(lexer, TOKEN_SEMICOLON);
     if (c == '(') return make_token(lexer, TOKEN_LPAREN);
     if (c == ')') return make_token(lexer, TOKEN_RPAREN);
+    if (c == '=') return make_token(lexer, TOKEN_EQUAL);
 
     return make_token(lexer, TOKEN_ERROR);
 }
