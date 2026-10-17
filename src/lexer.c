@@ -84,6 +84,14 @@ static Token scan_identifier(Lexer *lexer) {
         return make_token(lexer, TOKEN_CHECK);
     }
 
+    if (length == 5 && memcmp(lexer->start, "check", 5 ) == 0) {
+        return make_token(lexer, TOKEN_CHECK);
+    }
+
+    if (length == 6 && memcmp(lexer->start, "listen", 6)== 0) {
+        return make_token(lexer, TOKEN_LISTEN);
+    }
+
     return make_token(lexer, TOKEN_IDENTIFIER);
 }
 

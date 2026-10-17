@@ -55,7 +55,9 @@ typedef enum {
     TOKEN_GREATER_EQUAL,
 
     TOKEN_TALK,
-    TOKEN_NOTE
+    TOKEN_NOTE,
+
+    TOKEN_LISTEN
 
 } TokenType;
 

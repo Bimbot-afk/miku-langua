@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
         if (fuente_archivo == NULL) return 1;
         codigo = fuente_archivo;
     } else {
-        codigo = "note miku = 39;\ncheck miku == 39 talk \"Miku OK!\";\nsing miku + 1;";
+        codigo = "talk \"Escribe un numero:\";\nlisten x;\nsing x + 10;";
     }
 
     printf("==============================\n");
@@ -84,23 +84,20 @@ int main(int argc, char *argv[]) {
             Token var_name = lexer_next_token(&lexer);
             if (var_name.type != TOKEN_IDENTIFIER) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba el nombre de la variable.\n", var_name.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             Token eq = lexer_next_token(&lexer);
             if (eq.type != TOKEN_EQUAL) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba '=' despues de la variable.\n", eq.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             Token val_tok = lexer_next_token(&lexer);
             long valor;
             if (!resolve_value(val_tok, &valor)) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor o variable valida.\n", val_tok.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             token = lexer_next_token(&lexer);
@@ -110,8 +107,7 @@ int main(int argc, char *argv[]) {
                 Token next_val_tok = lexer_next_token(&lexer);
                 long next_val;
                 if (!resolve_value(next_val_tok, &next_val)) {
-                    if (fuente_archivo) free(fuente_archivo);
-                    return 1;
+                    if (fuente_archivo) free(fuente_archivo); return 1;
                 }
                 if (op == TOKEN_PLUS)  valor += next_val;
                 if (op == TOKEN_MINUS) valor -= next_val;
@@ -119,8 +115,7 @@ int main(int argc, char *argv[]) {
                 if (op == TOKEN_SLASH) {
                     if (next_val == 0) {
                         fprintf(stderr, "Error matematico [Linea %d]: Division por cero.\n", next_val_tok.line);
-                        if (fuente_archivo) free(fuente_archivo);
-                        return 1;
+                        if (fuente_archivo) free(fuente_archivo); return 1;
                     }
                     valor /= next_val;
                 }
@@ -129,8 +124,7 @@ int main(int argc, char *argv[]) {
 
             if (token.type != TOKEN_SEMICOLON) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Falta ';' al final de 'note'.\n", token.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             set_variable(var_name.lexeme, var_name.length, valor);
@@ -141,11 +135,9 @@ int main(int argc, char *argv[]) {
         /* 2. COMANDO TALK: talk <string>; */
         if (token.type == TOKEN_TALK) {
             token = lexer_next_token(&lexer);
-
             if (token.type != TOKEN_STRING) {
-                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba una cadena de texto entre comillas.\n", token.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba cadena entre comillas.\n", token.line);
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             printf("[Miku Talks] => %.*s\n", token.length - 2, token.lexeme + 1);
@@ -153,10 +145,8 @@ int main(int argc, char *argv[]) {
             token = lexer_next_token(&lexer);
             if (token.type != TOKEN_SEMICOLON) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Falta ';' al final de 'talk'.\n", token.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
-
             token = lexer_next_token(&lexer);
             continue;
         }
@@ -166,44 +156,35 @@ int main(int argc, char *argv[]) {
             token = lexer_next_token(&lexer);
             long acumulador;
             if (!resolve_value(token, &acumulador)) {
-                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un numero o variable tras 'sing'.\n", token.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba numero/variable tras 'sing'.\n", token.line);
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             token = lexer_next_token(&lexer);
-
             while (token.type == TOKEN_PLUS || token.type == TOKEN_MINUS ||
                    token.type == TOKEN_STAR || token.type == TOKEN_SLASH) {
-
                 TokenType op = token.type;
                 Token next_val_tok = lexer_next_token(&lexer);
                 long valor;
-
                 if (!resolve_value(next_val_tok, &valor)) {
-                    if (fuente_archivo) free(fuente_archivo);
-                    return 1;
+                    if (fuente_archivo) free(fuente_archivo); return 1;
                 }
-
                 if (op == TOKEN_PLUS)  acumulador += valor;
                 if (op == TOKEN_MINUS) acumulador -= valor;
                 if (op == TOKEN_STAR)  acumulador *= valor;
                 if (op == TOKEN_SLASH) {
                     if (valor == 0) {
                         fprintf(stderr, "Error matematico [Linea %d]: Division por cero.\n", next_val_tok.line);
-                        if (fuente_archivo) free(fuente_archivo);
-                        return 1;
+                        if (fuente_archivo) free(fuente_archivo); return 1;
                     }
                     acumulador /= valor;
                 }
-
                 token = lexer_next_token(&lexer);
             }
 
             if (token.type != TOKEN_SEMICOLON) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Falta ';' al final de 'sing'.\n", token.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             printf("[Miku Sings] => %ld\n", acumulador);
@@ -217,23 +198,20 @@ int main(int argc, char *argv[]) {
             long left_val;
             if (!resolve_value(left_tok, &left_val)) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor en la condicion.\n", left_tok.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             Token op_tok = lexer_next_token(&lexer);
             if (op_tok.type != TOKEN_EQUAL_EQUAL && op_tok.type != TOKEN_NOT_EQUAL) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba '==' o '!=' en check.\n", op_tok.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             Token right_tok = lexer_next_token(&lexer);
             long right_val;
             if (!resolve_value(right_tok, &right_val)) {
-                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor tras la comparacion.\n", right_tok.line);
-                if (fuente_archivo) free(fuente_archivo);
-                return 1;
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba valor tras comparacion.\n", right_tok.line);
+                if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
             bool condicion = false;
@@ -243,10 +221,8 @@ int main(int argc, char *argv[]) {
             token = lexer_next_token(&lexer);
 
             if (condicion) {
-                /* Condición verdadera: ejecuta la instrucción siguiente en la siguiente iteración */
                 continue;
             } else {
-                /* Condición falsa: descarta tokens hasta terminar la instrucción con ';' */
                 while (token.type != TOKEN_SEMICOLON && token.type != TOKEN_EOF) {
                     token = lexer_next_token(&lexer);
                 }
@@ -257,6 +233,36 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        /* 5. COMANDO LISTEN: listen <id>; */
+        if (token.type == TOKEN_LISTEN) {
+            Token var_name = lexer_next_token(&lexer);
+            if (var_name.type != TOKEN_IDENTIFIER) { /* Corregido de == a != */
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba nombre de variable tras 'listen'.\n", var_name.line);
+                if (fuente_archivo) free(fuente_archivo); return 1;
+            }
+
+            token = lexer_next_token(&lexer);
+            if (token.type != TOKEN_SEMICOLON) {
+                fprintf(stderr, "Error sintactico [Linea %d]: Falta ';' al final de 'listen'.\n", token.line);
+                if (fuente_archivo) free(fuente_archivo); return 1;
+            }
+
+            long input_val = 0;
+            printf("[Miku Listens] => ");
+
+            if (scanf("%ld", &input_val) != 1) {
+                input_val = 0;
+                int ch;
+                while ((ch = getchar()) != '\n' && ch != EOF) {} /* Corregido de EDF a EOF */
+            }
+
+            set_variable(var_name.lexeme, var_name.length, input_val);
+
+            token = lexer_next_token(&lexer);
+            continue;
+        }
+
+        /* Si llegamos aquí, el comando no existe */
         fprintf(stderr, "Error sintactico [Linea %d]: Comando no reconocido.\n", token.line);
         if (fuente_archivo) free(fuente_archivo);
         return 1;
