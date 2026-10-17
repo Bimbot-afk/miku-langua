@@ -96,6 +96,10 @@ static Token scan_identifier(Lexer *lexer) {
         return make_token(lexer, TOKEN_GACHA);
     }
 
+    if (length == 6 && memcmp(lexer->start, "encore", 6)== 0) {
+        return make_token(lexer, TOKEN_ENCORE);
+    }
+
     return make_token(lexer, TOKEN_IDENTIFIER);
 }
 
