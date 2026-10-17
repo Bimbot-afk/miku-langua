@@ -29,6 +29,11 @@ tl:dr Its a cool langua
     *   Syntax: `note <variable> = gacha <maximum>;`
     *   Example: `note luck = gacha 100;`
 
+* **`encore`**: for loop, repeats a code during the amount of times its asked.
+    * Syntax: `encore <amount of times> <action to repeat>;`
+    * Example: `encore 67 talk "67";`
+
+
 ## ATTENTION!
 
 *   **`;`**: Instruction terminator. It is a mandatory delimiter at the end of each individual command (`note`, `sing`, `talk`, `listen`) to indicate to the interpreter that the line has finished.
