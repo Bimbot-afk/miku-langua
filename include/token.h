@@ -57,7 +57,8 @@ typedef enum {
     TOKEN_TALK,
     TOKEN_NOTE,
 
-    TOKEN_LISTEN
+    TOKEN_LISTEN,
+    TOKEN_GACHA
 
 } TokenType;
 

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define MAX_VARS 64
 
@@ -40,7 +41,6 @@ static bool get_variable(const char *name, int length, long *out_value) {
     return false;
 }
 
-/* Resuelve si el token es un número directo o el valor de una variable */
 static bool resolve_value(Token token, long *val) {
     if (token.type == TOKEN_NUMBER) {
         *val = strtol(token.lexeme, NULL, 10);
@@ -60,12 +60,14 @@ int main(int argc, char *argv[]) {
     char *fuente_archivo = NULL;
     const char *codigo = NULL;
 
+    srand((unsigned int)time(NULL));
+
     if (argc >= 2) {
         fuente_archivo = read_file(argv[1]);
         if (fuente_archivo == NULL) return 1;
         codigo = fuente_archivo;
     } else {
-        codigo = "talk \"Escribe un numero:\";\nlisten x;\nsing x + 10;";
+        codigo = "note suerte = gacha 100;\nsing suerte;\ncheck suerte == 39 talk \"Sacaste a Miku!\";";
     }
 
     printf("==============================\n");
@@ -79,7 +81,7 @@ int main(int argc, char *argv[]) {
 
     while (token.type != TOKEN_EOF) {
 
-        /* 1. COMANDO NOTE: note <id> = <expr>; */
+        /* 1. COMANDO NOTE: note <id> = <expr> | gacha <max>; */
         if (token.type == TOKEN_NOTE) {
             Token var_name = lexer_next_token(&lexer);
             if (var_name.type != TOKEN_IDENTIFIER) {
@@ -94,9 +96,19 @@ int main(int argc, char *argv[]) {
             }
 
             Token val_tok = lexer_next_token(&lexer);
-            long valor;
-            if (!resolve_value(val_tok, &valor)) {
-                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor o variable valida.\n", val_tok.line);
+            long valor = 0;
+
+            /* Si usamos gacha, leemos el número máximo y generamos la probabilidad */
+            if (val_tok.type == TOKEN_GACHA) {
+                Token max_tok = lexer_next_token(&lexer);
+                long max_val;
+                if (!resolve_value(max_tok, &max_val) || max_val < 0) {
+                    fprintf(stderr, "Error sintactico [Linea %d]: 'gacha' requiere un numero maximo valido.\n", max_tok.line);
+                    if (fuente_archivo) free(fuente_archivo); return 1;
+                }
+                valor = rand() % (max_val + 1);
+            } else if (!resolve_value(val_tok, &valor)) {
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor, variable o 'gacha'.\n", val_tok.line);
                 if (fuente_archivo) free(fuente_archivo); return 1;
             }
 
@@ -236,7 +248,7 @@ int main(int argc, char *argv[]) {
         /* 5. COMANDO LISTEN: listen <id>; */
         if (token.type == TOKEN_LISTEN) {
             Token var_name = lexer_next_token(&lexer);
-            if (var_name.type != TOKEN_IDENTIFIER) { /* Corregido de == a != */
+            if (var_name.type != TOKEN_IDENTIFIER) {
                 fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba nombre de variable tras 'listen'.\n", var_name.line);
                 if (fuente_archivo) free(fuente_archivo); return 1;
             }
@@ -253,7 +265,7 @@ int main(int argc, char *argv[]) {
             if (scanf("%ld", &input_val) != 1) {
                 input_val = 0;
                 int ch;
-                while ((ch = getchar()) != '\n' && ch != EOF) {} /* Corregido de EDF a EOF */
+                while ((ch = getchar()) != '\n' && ch != EOF) {}
             }
 
             set_variable(var_name.lexeme, var_name.length, input_val);
@@ -262,7 +274,6 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        /* Si llegamos aquí, el comando no existe */
         fprintf(stderr, "Error sintactico [Linea %d]: Comando no reconocido.\n", token.line);
         if (fuente_archivo) free(fuente_archivo);
         return 1;

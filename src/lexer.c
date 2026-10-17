@@ -92,6 +92,10 @@ static Token scan_identifier(Lexer *lexer) {
         return make_token(lexer, TOKEN_LISTEN);
     }
 
+    if (length == 5 && memcmp(lexer ->start, "gacha", 5)== 0) {
+        return make_token(lexer, TOKEN_GACHA);
+    }
+
     return make_token(lexer, TOKEN_IDENTIFIER);
 }
 
