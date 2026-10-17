@@ -40,7 +40,7 @@ static bool get_variable(const char *name, int length, long *out_value) {
     return false;
 }
 
-/* Resuelve si el token es un número directo o el nombre de una variable */
+/* Resuelve si el token es un número directo o el valor de una variable */
 static bool resolve_value(Token token, long *val) {
     if (token.type == TOKEN_NUMBER) {
         *val = strtol(token.lexeme, NULL, 10);
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
         if (fuente_archivo == NULL) return 1;
         codigo = fuente_archivo;
     } else {
-        codigo = "note miku = 39;\nsing miku + 1;\ntalk \"Listo!\";";
+        codigo = "note miku = 39;\ncheck miku == 39 talk \"Miku OK!\";\nsing miku + 1;";
     }
 
     printf("==============================\n");
@@ -166,7 +166,7 @@ int main(int argc, char *argv[]) {
             token = lexer_next_token(&lexer);
             long acumulador;
             if (!resolve_value(token, &acumulador)) {
-                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un numero o variable valida tras 'sing'.\n", token.line);
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un numero o variable tras 'sing'.\n", token.line);
                 if (fuente_archivo) free(fuente_archivo);
                 return 1;
             }
@@ -209,6 +209,52 @@ int main(int argc, char *argv[]) {
             printf("[Miku Sings] => %ld\n", acumulador);
             token = lexer_next_token(&lexer);
             continue;
+        }
+
+        /* 4. COMANDO CHECK: check <val1> (== | !=) <val2> <instruccion> */
+        if (token.type == TOKEN_CHECK) {
+            Token left_tok = lexer_next_token(&lexer);
+            long left_val;
+            if (!resolve_value(left_tok, &left_val)) {
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor en la condicion.\n", left_tok.line);
+                if (fuente_archivo) free(fuente_archivo);
+                return 1;
+            }
+
+            Token op_tok = lexer_next_token(&lexer);
+            if (op_tok.type != TOKEN_EQUAL_EQUAL && op_tok.type != TOKEN_NOT_EQUAL) {
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba '==' o '!=' en check.\n", op_tok.line);
+                if (fuente_archivo) free(fuente_archivo);
+                return 1;
+            }
+
+            Token right_tok = lexer_next_token(&lexer);
+            long right_val;
+            if (!resolve_value(right_tok, &right_val)) {
+                fprintf(stderr, "Error sintactico [Linea %d]: Se esperaba un valor tras la comparacion.\n", right_tok.line);
+                if (fuente_archivo) free(fuente_archivo);
+                return 1;
+            }
+
+            bool condicion = false;
+            if (op_tok.type == TOKEN_EQUAL_EQUAL) condicion = (left_val == right_val);
+            if (op_tok.type == TOKEN_NOT_EQUAL)   condicion = (left_val != right_val);
+
+            token = lexer_next_token(&lexer);
+
+            if (condicion) {
+                /* Condición verdadera: ejecuta la instrucción siguiente en la siguiente iteración */
+                continue;
+            } else {
+                /* Condición falsa: descarta tokens hasta terminar la instrucción con ';' */
+                while (token.type != TOKEN_SEMICOLON && token.type != TOKEN_EOF) {
+                    token = lexer_next_token(&lexer);
+                }
+                if (token.type == TOKEN_SEMICOLON) {
+                    token = lexer_next_token(&lexer);
+                }
+                continue;
+            }
         }
 
         fprintf(stderr, "Error sintactico [Linea %d]: Comando no reconocido.\n", token.line);

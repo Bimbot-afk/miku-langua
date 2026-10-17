@@ -80,6 +80,10 @@ static Token scan_identifier(Lexer *lexer) {
         return make_token(lexer, TOKEN_NOTE);
     }
 
+    if (length == 5 && memcmp(lexer->start, "check", 5) == 0) {
+        return make_token(lexer, TOKEN_CHECK);
+    }
+
     return make_token(lexer, TOKEN_IDENTIFIER);
 }
 
@@ -107,6 +111,22 @@ Token lexer_next_token(Lexer *lexer) {
             advance(lexer);
         }
         return make_token(lexer, TOKEN_NUMBER);
+    }
+
+    if (c == '=') {
+        if (peek(lexer) == '=') {
+            advance(lexer);
+            return make_token(lexer, TOKEN_EQUAL_EQUAL);
+        }
+        return make_token(lexer, TOKEN_EQUAL);
+    }
+
+    if (c == '!') {
+        if (peek(lexer) == '=') {
+            advance(lexer);
+            return make_token(lexer, TOKEN_NOT_EQUAL);
+        }
+        return make_token(lexer, TOKEN_BANG);
     }
 
     if (c == '+') return make_token(lexer, TOKEN_PLUS);
