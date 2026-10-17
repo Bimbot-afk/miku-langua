@@ -1,0 +1,10 @@
+talk "guest the number Im thinking between 1-10";
+note num = gacha 10;
+
+listen guest;
+
+check num == guest talk "niceeee :D";
+check num != guest talk "thats not the number";
+talk "The number was:";
+sing num;
+

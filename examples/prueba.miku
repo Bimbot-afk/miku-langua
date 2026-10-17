@@ -1,0 +1,24 @@
+talk "holaaaa mundo";
+
+note x = 7;
+note y = 60;
+sing 39 + 1;
+sing  x + y;
+sing 1 - 68;
+
+note miku = 67;
+
+check miku == 67 talk "67 wowowowow";
+check miku != 64 talk "not 67676 :(";
+
+talk "cunatos anios tenes?";
+listen edad;
+
+check edad == 67 talk "6767 wowowowwo que viejo";
+check edad != 69 talk "que edad tan aburrida :/";
+
+note proximo_anio = edad + 67;
+talk "En 67 anios tendras";
+sing proximo_anio;
+
+talk "Fin del concierto!";
