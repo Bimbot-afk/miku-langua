@@ -1,0 +1,17 @@
+talk "beat miku in this game";
+talk "Try to score as much point as possible";
+
+note trys = 3;
+
+talk "miku's turn";
+note score_miku = 0;
+
+encore trys note score_miku = gacha 5 + score_miku;
+sing score_miku;
+
+talk "your turn";
+note score_user = 0;
+encore trys note score_user = gacha 5 + score_user;
+sing score_user;
+
+check score_user == score_miku talk "Empate!";
