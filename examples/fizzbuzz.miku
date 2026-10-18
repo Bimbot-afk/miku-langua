@@ -1,0 +1,35 @@
+talk "welcome to fizzbuzz :D";
+listen num;
+
+note fizz = num % 3;
+note buzz = num % 5;
+
+note itsfizz = 0;
+note itsbuzz = 0;
+note itsnone = 1;
+
+note fizzbuzz = 0;
+
+check fizz == 0 {
+    note itsfizz = 1;
+    note fizzbuzz = fizzbuzz +1;
+    note itsnone = 0;
+}
+
+check buzz == 0 {
+    note itsbuzz = 1;
+    note fizzbuzz = fizzbuzz + 1;
+    note itsnone = 0;
+}
+
+check fizzbuzz == 2 {
+    note itsfizz = 0;
+    note itsbuzz = 0;
+    talk "It's a FIZZBUZZ wowOWOowoOWowoOWOwoOW";
+}
+
+check itsfizz == 1 talk "fizz";
+check itsbuzz == 1 talk "buzz";
+check itsnone == 1 talk "nothig D:";
+
+sing num;
