@@ -1,0 +1,4 @@
+note x = 10;
+note y = x % 2;
+
+sing y;
