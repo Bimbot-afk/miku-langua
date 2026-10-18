@@ -60,7 +60,8 @@ typedef enum {
     TOKEN_LISTEN,
     TOKEN_GACHA,
 
-    TOKEN_ENCORE
+    TOKEN_ENCORE,
+    TOKEN_MODULE
 
 } TokenType;
 
