@@ -103,6 +103,7 @@ static Token scan_identifier(Lexer *lexer) {
     return make_token(lexer, TOKEN_IDENTIFIER);
 }
 
+
 Token lexer_next_token(Lexer *lexer) {
     skip_whitespace(lexer);
 
@@ -153,6 +154,11 @@ Token lexer_next_token(Lexer *lexer) {
     if (c == '(') return make_token(lexer, TOKEN_LPAREN);
     if (c == ')') return make_token(lexer, TOKEN_RPAREN);
     if (c == '=') return make_token(lexer, TOKEN_EQUAL);
+    if (c == '%') return make_token(lexer, TOKEN_MODULE);
+    if (c == '{') return make_token(lexer, TOKEN_LBRACE);
+    if (c == '}') return make_token(lexer, TOKEN_RBRACE);
+    if (c == '<') return make_token(lexer, TOKEN_LESS);
+    if (c == '>') return make_token(lexer, TOKEN_GREATER);
 
     return make_token(lexer, TOKEN_ERROR);
 }

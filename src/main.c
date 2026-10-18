@@ -60,10 +60,49 @@ static bool resolve_value(Token token, long *val) {
     return false;
 }
 
+static void jump_instructions(Lexer *lexer) {
+    Token t = lexer_next_token(lexer);
+
+    if (t.type == TOKEN_LBRACE) {
+        int i = 1; /* Debe empezar en 1 para que el bucle while funcione */
+        while (i > 0) {
+            t = lexer_next_token(lexer);
+            if (t.type == TOKEN_LBRACE) i++;
+            else if (t.type == TOKEN_RBRACE) i--;
+            else if (t.type == TOKEN_EOF) { /* Doble == para comparar */
+                fprintf(stderr, "ERROR: MISSING '}'\n");
+                exit(1);
+            }
+        }
+    }
+    else {
+        while (t.type != TOKEN_SEMICOLON && t.type != TOKEN_EOF) {
+            t = lexer_next_token(lexer);
+        }
+    }
+}
 
 static bool ejecutar_instruccion(Lexer *lexer) {
     Token token = lexer_next_token(lexer);
     if (token.type == TOKEN_EOF) return false;
+
+    /* 0. BLOQUES { } */
+    if (token.type == TOKEN_LBRACE) {
+        while (true) {
+            Lexer temp_lexer = *lexer;
+            Token future_tok = lexer_next_token(&temp_lexer);
+
+            if (future_tok.type == TOKEN_RBRACE) {
+                *lexer = temp_lexer; /* Minúscula, apuntando a tu variable real */
+                break;
+            } else if (future_tok.type == TOKEN_EOF) {
+                error_sintactico(future_tok.line, "Expected '}' to close the block.");
+            }
+
+            ejecutar_instruccion(lexer);
+        }
+        return true;
+    }
 
     /* 1. NOTE */
     if (token.type == TOKEN_NOTE) {
@@ -85,7 +124,7 @@ static bool ejecutar_instruccion(Lexer *lexer) {
         }
 
         token = lexer_next_token(lexer);
-        while (token.type == TOKEN_PLUS || token.type == TOKEN_MINUS || token.type == TOKEN_STAR || token.type == TOKEN_SLASH) {
+        while (token.type == TOKEN_PLUS || token.type == TOKEN_MINUS || token.type == TOKEN_STAR || token.type == TOKEN_SLASH || token.type == TOKEN_MODULE) {
             TokenType op = token.type;
             Token next_val_tok = lexer_next_token(lexer);
             long next_val;
@@ -98,6 +137,11 @@ static bool ejecutar_instruccion(Lexer *lexer) {
                 if (next_val == 0) error_sintactico(next_val_tok.line, "Division por cero.");
                 valor /= next_val;
             }
+            if (op == TOKEN_MODULE) {
+                if (next_val == 0) error_sintactico(next_val_tok.line, "Modulo por cero.");
+                valor %= next_val;
+            }
+
             token = lexer_next_token(lexer);
         }
 
@@ -123,7 +167,7 @@ static bool ejecutar_instruccion(Lexer *lexer) {
         if (!resolve_value(token, &acumulador)) error_sintactico(token.line, "Se esperaba numero o variable.");
 
         token = lexer_next_token(lexer);
-        while (token.type == TOKEN_PLUS || token.type == TOKEN_MINUS || token.type == TOKEN_STAR || token.type == TOKEN_SLASH) {
+        while (token.type == TOKEN_PLUS || token.type == TOKEN_MINUS || token.type == TOKEN_STAR || token.type == TOKEN_SLASH || token.type == TOKEN_MODULE) {
             TokenType op = token.type;
             Token next_val_tok = lexer_next_token(lexer);
             long valor;
@@ -135,6 +179,10 @@ static bool ejecutar_instruccion(Lexer *lexer) {
             if (op == TOKEN_SLASH) {
                 if (valor == 0) error_sintactico(next_val_tok.line, "Division por cero.");
                 acumulador /= valor;
+            }
+            if (op == TOKEN_MODULE) {
+                if (valor == 0) error_sintactico(next_val_tok.line, "Modulo por cero.");
+                acumulador %= valor;
             }
             token = lexer_next_token(lexer);
         }
@@ -166,24 +214,29 @@ static bool ejecutar_instruccion(Lexer *lexer) {
         Token left_tok = lexer_next_token(lexer);
         long left_val;
         if (!resolve_value(left_tok, &left_val)) error_sintactico(left_tok.line, "Condicion invalida.");
+
         Token op_tok = lexer_next_token(lexer);
-        if (op_tok.type != TOKEN_EQUAL_EQUAL && op_tok.type != TOKEN_NOT_EQUAL) error_sintactico(op_tok.line, "Falta == o !=");
+        if (op_tok.type != TOKEN_EQUAL_EQUAL && op_tok.type != TOKEN_NOT_EQUAL &&
+            op_tok.type != TOKEN_LESS && op_tok.type != TOKEN_GREATER) {
+            error_sintactico(op_tok.line, "Se esperaba ==, !=, < o >");
+            }
+
         Token right_tok = lexer_next_token(lexer);
         long right_val;
         if (!resolve_value(right_tok, &right_val)) error_sintactico(right_tok.line, "Condicion invalida.");
 
-        bool condicion = (op_tok.type == TOKEN_EQUAL_EQUAL) ? (left_val == right_val) : (left_val != right_val);
+        bool condicion = false;
+        if (op_tok.type == TOKEN_EQUAL_EQUAL) condicion = (left_val == right_val);
+        else if (op_tok.type == TOKEN_NOT_EQUAL) condicion = (left_val != right_val);
+        else if (op_tok.type == TOKEN_LESS) condicion = (left_val < right_val);
+        else if (op_tok.type == TOKEN_GREATER) condicion = (left_val > right_val);
 
         if (condicion) {
-            /* Ejecutamos la instrucción hermana de la misma línea */
             ejecutar_instruccion(lexer);
         } else {
-            /* Si es falsa, consumimos los tokens vacíos hasta superar el ';' */
-            Token t = lexer_next_token(lexer);
-            while (t.type != TOKEN_SEMICOLON && t.type != TOKEN_EOF) {
-                t = lexer_next_token(lexer);
-            }
+            jump_instructions(lexer);
         }
+
         return true;
     }
 
@@ -200,47 +253,49 @@ static bool ejecutar_instruccion(Lexer *lexer) {
             while (t.type != TOKEN_SEMICOLON && t.type != TOKEN_EOF) t = lexer_next_token(lexer);
             return true;
         }
-        */
+
         for (long i = 0; i < count; i++) {
             Lexer temp_lexer = start_state;
             ejecutar_instruccion(&temp_lexer);
             if (i == count - 1) {
                 *lexer = temp_lexer;
+            }
         }
         return true;
     }
 
+    /* Corregida la coma faltante en los argumentos de la funcion */
     error_sintactico(token.line, "Comando no reconocido o caracter invalido.");
     return false;
 }
 
-int main(int argc, char *argv[]) {
-    char *fuente_archivo = NULL;
-    const char *codigo = NULL;
+    int main(int argc, char *argv[]) {
+        char *fuente_archivo = NULL;
+        const char *codigo = NULL;
 
-    srand((unsigned int)time(NULL));
+        srand((unsigned int)time(NULL));
 
-    if (argc >= 2) {
-        fuente_archivo = read_file(argv[1]);
-        if (fuente_archivo == NULL) return 1;
-        codigo = fuente_archivo;
-    } else {
-        codigo = "note iter = 1;\nencore 3 talk \"Hola!\";";
+        if (argc >= 2) {
+            fuente_archivo = read_file(argv[1]);
+            if (fuente_archivo == NULL) return 1;
+            codigo = fuente_archivo;
+        } else {
+            codigo = "note iter = 1;\nencore 3 talk \"Hola!\";";
+        }
+
+        printf("==============================\n");
+        printf("   MIKU LANGUAGE INTERPRETER  \n");
+        printf("==============================\n");
+
+        Lexer lexer;
+        lexer_init(&lexer, codigo);
+
+        while (ejecutar_instruccion(&lexer)) {
+        }
+
+        if (fuente_archivo) free(fuente_archivo);
+        printf("==============================\n");
+        printf("   EXECUTION END     \n");
+        printf("==============================\n");
+        return 0;
     }
-
-    printf("==============================\n");
-    printf("   MIKU LANGUAGE INTERPRETER  \n");
-    printf("==============================\n");
-
-    Lexer lexer;
-    lexer_init(&lexer, codigo);
-
-    while (ejecutar_instruccion(&lexer)) {
-    }
-
-    if (fuente_archivo) free(fuente_archivo);
-    printf("==============================\n");
-    printf("   EJECUCION FINALIZADA       \n");
-    printf("==============================\n");
-    return 0;
-}
