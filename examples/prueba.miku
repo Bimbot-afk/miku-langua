@@ -21,4 +21,6 @@ note proximo_anio = edad + 67;
 talk "En 67 anios tendras";
 sing proximo_anio;
 
+check 2 < 5 talk "yess";
+
 talk "Fin del concierto!";
