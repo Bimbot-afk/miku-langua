@@ -13,8 +13,6 @@ typedef enum {
 
     TOKEN_LPAREN,
     TOKEN_RPAREN,
-    TOKEN_LBRACE,
-    TOKEN_RBRACE,
     TOKEN_COMMA,
     TOKEN_SEMICOLON,
 
@@ -61,7 +59,11 @@ typedef enum {
     TOKEN_GACHA,
 
     TOKEN_ENCORE,
-    TOKEN_MODULE
+    TOKEN_MODULE,
+
+    TOKEN_LBRACE,
+    TOKEN_RBRACE
+
 
 } TokenType;
 

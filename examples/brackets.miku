@@ -1,0 +1,13 @@
+note i = 1;
+
+talk "loop init";
+
+encore 3 {
+    talk "itineration number:";
+    sing i;
+    note i = i+1;
+}
+
+check i == 4 {
+    talk "loop end correctly :D";
+}
