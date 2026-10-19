@@ -1,5 +1,10 @@
 # Miku Language
 
+````mikuTextMain
+talk "HELLO WORLD!!! :D";
+````
+
+
 Miku is an interpreted, dynamically typed, and linearly executed programming language, designed with a syntax and thematic commands inspired by MIKU! It is written entirely in C and allows for direct evaluation from plain text scripts[cite: 1].
 
 tl:dr Its a cool langua
