@@ -1,0 +1,29 @@
+{
+  "name": "miku-langua",
+  "displayName": "Miku langua",
+  "description": "Syntax support for miku langua",
+  "version": "1.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Programing Lamguages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "miku",
+        "aliases": ["Miku", "miku"],
+        "extensions": [".miku"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "miku",
+        "scopeName": "source.miku",
+        "path": "./syntaxes/miku.tmLanguage.json"
+      }
+    ]
+  }
+}
