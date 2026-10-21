@@ -54,3 +54,13 @@ tl:dr Its a cool langua
 ## ATTENTION!
 
 -   **`;`**: Instruction terminator. It is a mandatory delimiter at the end of each individual command (`note`, `sing`, `talk`, `listen`) to indicate to the interpreter that the line has finished.
+
+## VS Code Extension (Syntax Highlighting)
+
+To get colors and syntax support for `.miku` files:
+
+-   Copy the **`miku-theme`** folder into your VS Code extensions directory:
+    -   **Windows**: `C:\Users\<your_user>\.vscode\extensions\`
+    -   **Linux / macOS**: `~/.vscode/extensions/`
+-   Restart VS Code (or press `Ctrl + Shift + P` and run **`Developer: Reload Window`**).
+-   If you use another IDE, just search the extension folder and paste the folder there.
