@@ -1,0 +1,50 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Miku",
+  "scopeName": "source.miku",
+  "patterns": [
+    {
+      "name": "comment.line.double-slash.miku",
+      "match": "//.*$"
+    },
+    {
+      "name": "keyword.control.miku",
+      "match": "\\b(note|sing|talk|check|listen|gacha|encore)\\b"
+    },
+    {
+      "name": "string.quoted.double.miku",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.miku",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric.miku",
+      "match": "\\b\\d+\\b"
+    },
+    {
+      "name": "keyword.operator.miku",
+      "match": "(==|!=|<=|>=|\\+|-|\\*|/|%|=|<|>|!)"
+    },
+    {
+      "name": "variable.other.miku",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    },
+    {
+      "name": "punctuation.terminator.statement.miku",
+      "match": ";"
+    },
+    {
+      "name": "punctuation.section.block.begin.miku",
+      "match": "\\{"
+    },
+    {
+      "name": "punctuation.section.block.end.miku",
+      "match": "\\}"
+    }
+  ]
+}

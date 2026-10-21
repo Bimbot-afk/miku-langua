@@ -1,13 +1,14 @@
 {
   "name": "miku-langua",
-  "displayName": "Miku langua",
-  "description": "Syntax support for miku langua",
-  "version": "1.0",
+  "publisher": "miku",
+  "displayName": "Miku Language",
+  "description": "Syntax support for Miku language",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.60.0"
   },
   "categories": [
-    "Programing Lamguages"
+    "Programming Languages"
   ],
   "contributes": {
     "languages": [

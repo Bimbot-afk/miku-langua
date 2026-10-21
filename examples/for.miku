@@ -15,3 +15,4 @@ encore trys note score_user = gacha 5 + score_user;
 sing score_user;
 
 check score_user == score_miku talk "Draw!";
+
