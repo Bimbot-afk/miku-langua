@@ -5,7 +5,7 @@ talk "HELLO WORLD!!! :D";
 ````
 
 
-Miku is an interpreted, dynamically typed, and linearly executed programming language, designed with a syntax and thematic commands inspired by MIKU! It is written entirely in C and allows for direct evaluation from plain text scripts[cite: 1].
+Miku is an interpreted, dynamically typed, and linearly executed programming language, designed with a syntax and thematic commands inspired by MIKU! It is written entirely in C and allows for direct evaluation from plain text scripts.
 
 tl:dr Its a cool langua
 
@@ -63,4 +63,4 @@ To get colors and syntax support for `.miku` files:
     -   **Windows**: `C:\Users\<your_user>\.vscode\extensions\`
     -   **Linux / macOS**: `~/.vscode/extensions/`
 -   Restart VS Code (or press `Ctrl + Shift + P` and run **`Developer: Reload Window`**).
--   If you use another IDE, just search the extension folder and paste the folder there.
+-   If you use another IDE, just search the extension folder and paste **`miku-theme`** folder there.
