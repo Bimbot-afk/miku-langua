@@ -55,6 +55,19 @@ tl:dr Its a cool langua
 
 -   **`;`**: Instruction terminator. It is a mandatory delimiter at the end of each individual command (`note`, `sing`, `talk`, `listen`) to indicate to the interpreter that the line has finished.
 
+## How to Run
+
+To execute any `.miku` script using the precompiled binary:
+
+-   Open a terminal in the project folder and run:
+    ```bash
+    ./miku.exe examples/fizzbuzz.miku
+    ```
+-   Or replace `examples/fizzbuzz.miku` with the path to your own `.miku` file:
+    ```bash
+    ./miku.exe <your_script>.miku
+    ```
+
 ## VS Code Extension (Syntax Highlighting)
 
 To get colors and syntax support for `.miku` files:

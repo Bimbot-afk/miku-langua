@@ -9,5 +9,6 @@ include_directories(include)
 add_executable(Miku_language
         src/main.c
         src/lexer.c
+        src/utils.c
         include/utils.h
 )
